@@ -3,6 +3,7 @@
 
 const STORAGE_KEY = 'workshop-todos';
 const THEME_KEY = 'workshop-theme';
+const FILTER_KEY = 'workshop-filter';
 
 // 取得畫面上會用到的元素
 const form = document.getElementById('todo-form');
@@ -20,7 +21,13 @@ const themeLabel = document.getElementById('theme-label');
 let todos = loadTodos();
 
 // 目前的篩選條件:'all' | 'active' | 'completed'
-let currentFilter = 'all';
+let currentFilter = loadFilter();
+
+/** 只接受已知的篩選值，無效偏好回退為全部 */
+function loadFilter() {
+  const saved = localStorage.getItem(FILTER_KEY);
+  return ['all', 'active', 'completed'].includes(saved) ? saved : 'all';
+}
 
 // ---------- 資料存取 ----------
 
@@ -175,6 +182,7 @@ function deleteTodo(id) {
 /** 切換篩選條件 */
 function setFilter(filter) {
   currentFilter = filter;
+  localStorage.setItem(FILTER_KEY, filter);
 
   filterButtons.forEach((button) => {
     const isActive = button.dataset.filter === filter;
@@ -227,4 +235,5 @@ themeToggle.addEventListener('click', () => {
 
 // 頁面載入時先套用主題並畫一次清單
 initTheme();
-render();
+setFilter(currentFilter);
+
