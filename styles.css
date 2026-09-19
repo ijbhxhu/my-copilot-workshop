@@ -272,3 +272,7 @@ h1 {
     flex-direction: column;
   }
 }
+
+/* 批次操作的停用狀態 */
+#clear-completed { margin: 8px auto 0; }
+#clear-completed:disabled { opacity: 0.55; cursor: not-allowed; }
