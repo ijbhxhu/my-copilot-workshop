@@ -10,6 +10,7 @@ const form = document.getElementById('todo-form');
 const input = document.getElementById('todo-input');
 const list = document.getElementById('todo-list');
 const emptyState = document.getElementById('empty-state');
+const statusMessage = document.getElementById('status-message');
 const remainingCount = document.getElementById('remaining-count');
 const filterButtons = document.querySelectorAll('.btn-filter');
 const themeToggle = document.getElementById('theme-toggle');
@@ -100,12 +101,13 @@ function getEmptyMessage() {
   if (currentFilter === 'active') {
     return '太棒了,沒有未完成的事項!';
   }
-  return '還沒有已完成的事項。';
+  return '目前沒有已完成的事項。未完成項目仍保留在「全部」或「未完成」中。';
 }
 
 /** 依照目前的 todos 陣列與篩選條件,重新畫出整份清單 */
 function render() {
   const visibleTodos = getVisibleTodos();
+  statusMessage.textContent = '';
 
   list.replaceChildren();
 
@@ -165,11 +167,15 @@ function addTodo(text) {
 
 /** 切換某一筆待辦的完成狀態 */
 function toggleTodo(id) {
+  const changedTodo = todos.find((todo) => todo.id === id);
   todos = todos.map((todo) =>
     todo.id === id ? { ...todo, completed: !todo.completed } : todo
   );
   saveTodos();
   render();
+  if (changedTodo && currentFilter === 'completed' && changedTodo.completed) {
+    statusMessage.textContent = `「${changedTodo.text}」已改為未完成，資料沒有被刪除；切換到「全部」或「未完成」即可查看。`;
+  }
 }
 
 /** 刪除某一筆待辦 */
