@@ -14,6 +14,7 @@ const statusMessage = document.getElementById('status-message');
 const remainingCount = document.getElementById('remaining-count');
 const filterButtons = document.querySelectorAll('.btn-filter');
 const themeToggle = document.getElementById('theme-toggle');
+const clearCompleted = document.getElementById('clear-completed');
 const themeIcon = document.getElementById('theme-icon');
 const themeLabel = document.getElementById('theme-label');
 
@@ -144,6 +145,7 @@ function render() {
 
   // 更新未完成數量(不受篩選影響,永遠是整體數量)
   const remaining = todos.filter((todo) => !todo.completed).length;
+  clearCompleted.disabled = !todos.some((todo) => todo.completed);
   remainingCount.textContent = `未完成:${remaining} 項`;
 }
 
@@ -225,6 +227,16 @@ list.addEventListener('click', (event) => {
   } else if (event.target.matches('.btn-delete')) {
     deleteTodo(id);
   }
+});
+
+// 批次清除前先確認，取消時不修改任何資料
+clearCompleted.addEventListener('click', () => {
+  if (!todos.some((todo) => todo.completed)) return;
+  if (!window.confirm('確定清除所有已完成事項？此操作無法復原。')) return;
+  todos = todos.filter((todo) => !todo.completed);
+  saveTodos();
+  render();
+  statusMessage.textContent = '已清除完成事項，未完成事項仍保留。';
 });
 
 // 篩選按鈕
